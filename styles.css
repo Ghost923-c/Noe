@@ -1,8 +1,8 @@
 diff --git a/styles.css b/styles.css
-index 098471491bafd8a523353c42b6ee4c6bda6c6de3..007c2129b7d694cd9037a632698e8d7310bb06a4 100644
+index 098471491bafd8a523353c42b6ee4c6bda6c6de3..b5a270089698b57ac7016665e00b612fcfca6afd 100644
 --- a/styles.css
 +++ b/styles.css
-@@ -1,261 +1,180 @@
+@@ -1,261 +1,206 @@
  :root {
    --bg: #f5f7fb;
    --card: #ffffff;
@@ -92,7 +92,7 @@ index 098471491bafd8a523353c42b6ee4c6bda6c6de3..007c2129b7d694cd9037a632698e8d73
 -.peer-metrics {
 +.source-grid {
    display: grid;
-+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
++  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
    gap: 0.7rem;
 -  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 -  margin-bottom: 0.9rem;
@@ -107,25 +107,47 @@ index 098471491bafd8a523353c42b6ee4c6bda6c6de3..007c2129b7d694cd9037a632698e8d73
    border: 1px solid var(--border);
 -  border-radius: 0.6rem;
 -  padding: 0.7rem;
--  display: flex;
--  flex-direction: column;
 +  border-radius: 0.55rem;
 +  padding: 0.75rem;
 +  background: #fbfdff;
++}
++
++.source-head {
+   display: flex;
+-  flex-direction: column;
++  justify-content: space-between;
++  align-items: center;
++  margin-bottom: 0.3rem;
++}
++
++.source-head strong {
++  color: #166534;
  }
  
 -.metric-tile strong {
 -  font-size: 1.2rem;
-+.source-tile strong {
-+  display: block;
++.source-head span {
    color: #1e3a8a;
++  font-size: 0.85rem;
++  font-weight: 600;
++}
++
++.source-tile h4 {
++  margin: 0.25rem 0;
++  font-size: 0.98rem;
++}
++
++.source-tile p {
++  margin: 0.2rem 0;
++  color: #334155;
  }
  
 -.metric-tile span {
--  color: var(--muted);
++.source-tile small {
+   color: var(--muted);
 -  font-size: 0.9rem;
--}
--
+ }
+ 
  .grid {
    display: grid;
    gap: 0.9rem;
