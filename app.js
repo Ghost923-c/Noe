@@ -1,200 +1,678 @@
-diff --git a/index.html b/index.html
-index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda230aba1a 100644
---- a/index.html
-+++ b/index.html
-@@ -1,161 +1,81 @@
- <!DOCTYPE html>
- <html lang="en">
- <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
--  <title>AI Readiness Audit | AI Audit Toolkit</title>
-+  <title>ENR Compliance & Market Intelligence Monitor</title>
-   <link rel="stylesheet" href="styles.css" />
- </head>
- <body>
-   <header class="hero">
-     <div class="hero-wrap">
--      <img class="hero-logo" src="CDH_Leopard - 010 no background.png" alt="CDH_Leopard - 010 no background.png" />
-+      <img class="hero-logo" src="CDH_Leopard - 010 no background.png" alt="ENR monitor logo" />
-       <div>
--        <p class="eyebrow">South Africa • Legal Sector</p>
--        <h1>AI Readiness Audit Toolkit</h1>
-+        <p class="eyebrow">Energy & Natural Resources</p>
-+        <h1>Regulation, Compliance & Market Intelligence Monitor</h1>
-         <p>
--          A practical internal tool for you to assess how you are adopting and scaling your AI ecosytem. 
-+          An ENR monitoring device with agential source tracking and barometer scoring for battery manufacturing,
-+          independent power producers (IPPs), and wind/solar farms.
-         </p>
-       </div>
-     </div>
-   </header>
+diff --git a/app.js b/app.js
+index fc049e89f44868765e649865052d7ed597e3832f..e5c03e3d7cf85446f107d3ec234ec1370d7f8695 100644
+--- a/app.js
++++ b/app.js
+@@ -1,483 +1,243 @@
+-const categories = [
+-  { key: "strategy", label: "AI Strategy & Leadership", prompt: "Does leadership have a clear AI strategy and business goals?" },
+-  { key: "governance", label: "Governance, Ethics & POPIA Readiness", prompt: "Are data governance, ethics, and POPIA compliance controls in place for AI use?" },
+-  { key: "data", label: "Data Quality & Accessibility", prompt: "Is business data accurate, secure, and accessible for AI projects?" },
+-  { key: "technology", label: "Technology Stack", prompt: "Can current systems integrate with modern AI solutions and automation tools?" },
+-  { key: "skills", label: "People & Skills", prompt: "Do staff have the skills to adopt and govern AI responsibly?" },
+-  { key: "comms", label: "Communication & Change Management", prompt: "Is there a communication plan to support AI adoption and stakeholder trust?" },
++const sourceFeeds = [
++  {
++    source: "NERSA licensing notices",
++    domain: "Regulation",
++    coverage: "Generation licences, amendments, exemptions",
++    cadence: "Daily",
++    status: "Live",
++  },
++  {
++    source: "DMRE + IPP Office procurement updates",
++    domain: "Market",
++    coverage: "REIPPPP rounds, bid windows, preferred bidder updates",
++    cadence: "Daily",
++    status: "Live",
++  },
++  {
++    source: "South African Gazette & environmental authorisations",
++    domain: "Compliance",
++    coverage: "EIA approvals, water-use licences, permit conditions",
++    cadence: "Daily",
++    status: "Live",
++  },
++  {
++    source: "Eskom grid and transmission bulletins",
++    domain: "Operations",
++    coverage: "Grid constraints, curtailment risk, connection backlogs",
++    cadence: "Weekly",
++    status: "Live",
++  },
++  {
++    source: "WIPO + CIPC IP disputes and filings",
++    domain: "IP",
++    coverage: "Battery chemistry patents, manufacturing process disputes",
++    cadence: "Weekly",
++    status: "Pilot",
++  },
++  {
++    source: "IEA / IRENA / BNEF market trackers",
++    domain: "Intelligence",
++    coverage: "Cell pricing, project pipeline, supply-chain pressure signals",
++    cadence: "Monthly",
++    status: "Live",
++  },
+ ];
  
-   <main>
-     <section class="card intro">
--      <h2>How it works</h2>
--      <ol>
--        <li>Capture client/business details.</li>
--        <li>Score each AI readiness category from 1 (weak) to 5 (strong).</li>
--        <li>Capture the extended financial-sector governance and GenAI questions.</li>
--        <li>Review graphs + recommendations and download your report files.</li>
--      </ol>
--      <p class="hint">Tip: later you can connect this app to Dynamics 365 in <code>generateAiSummary()</code> in <code>app.js</code>.</p>
+-const sectorAdoptionData = [
+-  { label: "Banking", percent: 52 },
+-  { label: "Insurance", percent: 8 },
+-  { label: "Investments", percent: 11 },
+-  { label: "Payments", percent: 50 },
+-  { label: "Lending", percent: 8 },
+-  { label: "Pensions", percent: 14 },
++const modules = [
++  {
++    id: "battery",
++    title: "Battery Manufacturing Barometer",
++    description: "Compliance and market-risk tracking for battery plants, importers, and recyclers.",
++    indicators: [
++      { key: "traceability", label: "Critical mineral traceability (OECD due diligence + sanctions screening)" },
++      { key: "safety", label: "Plant safety and hazardous material controls (OHS + emissions permits)" },
++      { key: "certification", label: "Product conformity readiness (IEC/UL transport + storage standards)" },
++      { key: "waste", label: "Battery take-back and end-of-life recycling reporting" },
++    ],
++  },
++  {
++    id: "ipp",
++    title: "IPP Compliance Barometer",
++    description: "Regulatory performance tracking for utility-scale and C&I IPP portfolios.",
++    indicators: [
++      { key: "licensing", label: "Generation licensing and permit validity (NERSA + municipal)" },
++      { key: "ppa", label: "PPA and offtake compliance (availability, dispatch, settlement)" },
++      { key: "grid", label: "Grid-code performance and curtailment compliance" },
++      { key: "reporting", label: "Regulatory reporting and audit trail completeness" },
++    ],
++  },
++  {
++    id: "renewables",
++    title: "Wind & Solar Farm Barometer",
++    description: "Project-level compliance health for wind and solar assets through construction and operation.",
++    indicators: [
++      { key: "land", label: "Land rights, servitudes, and community consultation obligations" },
++      { key: "env", label: "EIA condition compliance (biodiversity, noise, avifauna, water)" },
++      { key: "operations", label: "Operational compliance (HSE incidents, outage reporting, maintenance)" },
++      { key: "community", label: "Local content, jobs, and socio-economic development commitments" },
++    ],
++  },
+ ];
+ 
+-const investmentBandData = [
+-  { label: "<R1m", percent: 50 },
+-  { label: "R1m-R5m", percent: 12 },
+-  { label: "R6m-R10m", percent: 13 },
+-  { label: "R11m-R16m", percent: 3 },
+-  { label: "R17m-R20m", percent: 2 },
+-  { label: "R21m-R30m", percent: 2 },
+-  { label: ">R30m", percent: 18 },
+-];
 -
--      <section class="peer-section">
--        <h3>How your peers are doing (South African financial services)</h3>
--        <p>
--          Based on SARB/FSCA databook survey figures, AI adoption is still uneven across financial-services segments,
--          with higher penetration in banking and payments and lower penetration in insurance, lending, and investments.
--        </p>
--        <div class="peer-metrics">
--          <div class="metric-tile"><strong>~2050</strong><span>Total survey responses</span></div>
--          <div class="metric-tile"><strong>220</strong><span>Respondents using AI</span></div>
--          <div class="metric-tile"><strong>10.6%</strong><span>AI usage across sector</span></div>
--        </div>
+-const genAiUseCases = [
+-  "Algorithmic trading",
+-  "AML/CFT: behavioural or transaction monitoring",
+-  "AML/CFT: identification and verification (including remote onboarding)",
+-  "Capital management",
+-  "Carbon footprint estimation",
+-  "Claims management",
+-  "Credit pricing",
+-  "Credit underwriting",
+-  "Creditworthiness assessment / credit scoring",
+-  "Customer support, including chatbots",
+-  "Cybersecurity",
+-  "Forecasting and business modelling",
+-  "Fraud detection",
+-  "Hedging",
+-  "Insurance pricing",
+-  "Insurance underwriting",
+-  "Liquidity management",
+-  "Market conduct risk",
+-  "Optimisation",
+-];
 -
--        <div class="chart-grid peer-charts">
--          <div class="chart-card">
--            <h3>AI adoption by sector (%)</h3>
--            <div class="chart-box">
--              <canvas id="adoptionChart"></canvas>
--            </div>
--          </div>
+-const form = document.getElementById("audit-form");
+-const questionList = document.getElementById("question-list");
+-const useCaseList = document.getElementById("usecase-list");
++const form = document.getElementById("monitor-form");
++const sourceList = document.getElementById("source-list");
++const moduleList = document.getElementById("module-list");
+ const results = document.getElementById("results");
+-const scoreBreakdown = document.getElementById("score-breakdown");
+-const recommendations = document.getElementById("recommendations");
+-const aiSummary = document.getElementById("ai-summary");
+-const downloadJsonBtn = document.getElementById("downloadJsonBtn");
+-const downloadCsvBtn = document.getElementById("downloadCsvBtn");
+-const downloadTxtBtn = document.getElementById("downloadTxtBtn");
+-const resetBtn = document.getElementById("resetBtn");
 -
--          <div class="chart-card">
--            <h3>Intended AI investment (2024)</h3>
--            <div class="chart-box">
--              <canvas id="investmentChart"></canvas>
--            </div>
--          </div>
--        </div>
+-let adoptionChartInstance;
+-let investmentChartInstance;
++const overallSummary = document.getElementById("overall-summary");
++const barometerCards = document.getElementById("barometer-cards");
++const priorityActions = document.getElementById("priority-actions");
++const downloadBtn = document.getElementById("downloadBtn");
+ 
+-buildQuestions();
+-buildUseCases();
++buildSourceFeedTiles();
++buildModuleInputs();
+ setDefaultDate();
+-drawPeerGraphs();
+ 
+ form.addEventListener("submit", (event) => {
+   event.preventDefault();
+-  const payload = collectPayload();
+-  const result = evaluateAudit(payload.scores);
 -
--        <p class="hint">Source: SARB/FSCA Artificial Intelligence in the South African Financial Sector Databook.</p>
--      </section>
-+      <h2>Monitoring architecture</h2>
-+      <p>
-+        This prototype tracks whether your intelligence agents are connected to core news streams and key databases,
-+        then scores three operational modules against compliance-critical indicators.
-+      </p>
-+      <div class="source-grid" id="source-list"></div>
-     </section>
+-  renderResults(payload, result);
+-  drawScoreChart(payload.scores);
+-  drawMaturityChart(result.average);
+-  generateAiSummary(payload, result);
++  const snapshot = buildSnapshot();
++  renderSnapshot(snapshot);
+ });
  
-     <section class="card">
--      <h2>Audit Details</h2>
--      <form id="audit-form">
-+      <h2>Assessment input</h2>
-+      <form id="monitor-form">
-         <div class="grid two">
-           <label>
--            Business Name
--            <input type="text" id="businessName" required placeholder="Example: Ubuntu Manufacturing" />
--          </label>
--          <label>
--            Industry
--            <input type="text" id="industry" required placeholder="Example: Financial Services" />
--          </label>
--          <label>
--            Contact Person
--            <input type="text" id="contact" required placeholder="Name + role" />
--          </label>
--          <label>
--            Audit Date
--            <input type="date" id="auditDate" required />
-+            Organisation
-+            <input type="text" id="organisation" required placeholder="Example: ENR Portfolio Operations" />
-           </label>
--        </div>
+-downloadJsonBtn.addEventListener("click", () => downloadJson(buildAuditData()));
+-downloadCsvBtn.addEventListener("click", () => downloadCsv(buildAuditData()));
+-downloadTxtBtn.addEventListener("click", () => downloadTxtReport(buildAuditData()));
 -
--        <h3>AI Readiness Categories</h3>
--        <div id="question-list" class="grid one"></div>
+-resetBtn.addEventListener("click", () => {
+-  results.classList.add("hidden");
+-  scoreBreakdown.innerHTML = "";
+-  recommendations.innerHTML = "";
+-  aiSummary.textContent = "No AI summary generated yet.";
+-  clearCanvas("scoreChart");
+-  clearCanvas("maturityChart");
++downloadBtn.addEventListener("click", () => {
++  const snapshot = buildSnapshot();
++  downloadFile(JSON.stringify(snapshot, null, 2), `enr-barometer-${safeFileName(snapshot.organisation || "snapshot")}.json`, "application/json");
+ });
+ 
+-function buildQuestions() {
+-  const options = [1, 2, 3, 4, 5].map((value) => `<option value="${value}">${value}</option>`).join("");
 -
--        <h3>Financial Sector AI Research Questions</h3>
--        <div class="grid one">
-           <label>
--            19) Customer-facing AI disclosures
--            <textarea id="q19" rows="3" placeholder="What disclosures do you provide for customer-facing AI applications?"></textarea>
-+            Coverage Region
-+            <input type="text" id="region" required placeholder="Example: South Africa + SADC" />
-           </label>
-           <label>
--            20) AI testing and validation controls
--            <textarea id="q20" rows="3" placeholder="How do you ensure testing and validation of AI models for reliable outputs?"></textarea>
-+            Lead Analyst
-+            <input type="text" id="analyst" required placeholder="Example: Market Intelligence Lead" />
-           </label>
-           <label>
--            21) Safe/sound/responsible AI adoption methods
--            <textarea id="q21" rows="3" placeholder="Which approaches are most suitable for the financial sector?"></textarea>
--          </label>
--          <label>
--            22) Regulatory simplification/strengthening ideas
--            <textarea id="q22" rows="3" placeholder="How should regulation be simplified, strengthened or extended for AI risks?"></textarea>
--          </label>
--          <label>
--            23) AI/ML use across value chain (example)
--            <textarea id="q23" rows="3" placeholder="Provide one example and explain implementation."></textarea>
--          </label>
--          <label>
--            24) Generative AI use across value chain (example)
--            <textarea id="q24" rows="3" placeholder="Provide one example and explain implementation."></textarea>
-+            Reporting Date
-+            <input type="date" id="reportDate" required />
-           </label>
-         </div>
+-  questionList.innerHTML = categories
++function buildSourceFeedTiles() {
++  sourceList.innerHTML = sourceFeeds
+     .map(
+-      (category) => `
+-      <label class="question">
+-        <p>${category.label}</p>
+-        <span>${category.prompt}</span>
+-        <select id="${category.key}" required>
+-          <option value="" disabled selected>Select score</option>
+-          ${options}
+-        </select>
+-      </label>
+-    `,
++      (feed) => `
++        <div class="source-tile">
++          <div class="source-head">
++            <strong>${feed.status}</strong>
++            <span>${feed.domain}</span>
++          </div>
++          <h4>${feed.source}</h4>
++          <p>${feed.coverage}</p>
++          <small>Cadence: ${feed.cadence}</small>
++        </div>
++      `,
+     )
+     .join("");
+ }
  
--        <h3>Generative AI Use Cases (select all that apply)</h3>
--        <div id="usecase-list" class="grid two"></div>
-+        <h3>Module barometer scoring (1 weak - 5 strong)</h3>
-+        <div id="module-list" class="grid one"></div>
+-function buildUseCases() {
+-  useCaseList.innerHTML = genAiUseCases
+-    .map(
+-      (item, index) => `
+-        <label class="checkbox-row">
+-          <input type="checkbox" id="usecase-${index}" value="${item}" />
+-          <span>${item}</span>
+-        </label>
+-      `,
+-    )
++function buildModuleInputs() {
++  const options = [1, 2, 3, 4, 5].map((value) => `<option value="${value}">${value}</option>`).join("");
++
++  moduleList.innerHTML = modules
++    .map((module) => {
++      const questions = module.indicators
++        .map(
++          (indicator) => `
++            <label class="question">
++              <span>${indicator.label}</span>
++              <select id="${module.id}-${indicator.key}" required>
++                <option value="" disabled selected>Select score</option>
++                ${options}
++              </select>
++            </label>
++          `,
++        )
++        .join("");
++
++      return `
++        <section class="module-card">
++          <h4>${module.title}</h4>
++          <p class="hint">${module.description}</p>
++          <div class="grid one">${questions}</div>
++        </section>
++      `;
++    })
+     .join("");
+ }
  
-         <div class="actions">
--          <button type="submit">Generate Audit Result</button>
--          <button type="button" id="downloadJsonBtn">Download JSON</button>
--          <button type="button" id="downloadCsvBtn">Download CSV</button>
--          <button type="button" id="downloadTxtBtn">Download Text Report</button>
--          <button type="reset" id="resetBtn" class="secondary">Reset</button>
-+          <button type="submit">Generate ENR barometer</button>
-+          <button type="button" id="downloadBtn" class="secondary">Download JSON snapshot</button>
-         </div>
-       </form>
-     </section>
+ function setDefaultDate() {
+-  document.getElementById("auditDate").value = new Date().toISOString().split("T")[0];
+-}
+-
+-function collectPayload() {
+-  const scores = categories.map((category) => ({
+-    key: category.key,
+-    label: category.label,
+-    score: Number(document.getElementById(category.key).value || 0),
+-  }));
++  document.getElementById("reportDate").value = new Date().toISOString().split("T")[0];
++}
++
++function buildSnapshot() {
++  const moduleScores = modules.map((module) => {
++    const indicators = module.indicators.map((indicator) => {
++      const score = Number(document.getElementById(`${module.id}-${indicator.key}`).value || 0);
++      return { label: indicator.label, score };
++    });
++
++    const average = indicators.reduce((sum, item) => sum + item.score, 0) / indicators.length;
++    return {
++      id: module.id,
++      title: module.title,
++      average: Number(average.toFixed(2)),
++      level: getLevel(average),
++      indicators,
++    };
++  });
  
--    <section id="results" class="card hidden" aria-live="polite">
--      <h2>Audit Results</h2>
--      <div id="score-breakdown"></div>
--      <div class="chart-grid">
--        <div>
--          <h3>Category Score Graph</h3>
--          <canvas id="scoreChart" width="900" height="300"></canvas>
--        </div>
--        <div>
--          <h3>Maturity Graph</h3>
--          <canvas id="maturityChart" width="280" height="280"></canvas>
--        </div>
--      </div>
--      <div id="recommendations"></div>
--      <p class="contact-line"><strong>Reach out to us at <a href="mailto:FuturefitAI@legal.com">FuturefitAI@legal.com</a>.</strong></p>
--      <details>
--        <summary>Optional AI-generated narrative (placeholder)</summary>
--        <p id="ai-summary">No AI summary generated yet.</p>
--      </details>
-+    <section id="results" class="card hidden">
-+      <h2>Barometer output</h2>
-+      <p id="overall-summary"></p>
-+      <div id="barometer-cards" class="chart-grid"></div>
-+      <div id="priority-actions"></div>
-     </section>
-   </main>
+-  const selectedUseCases = genAiUseCases.filter((_, index) => document.getElementById(`usecase-${index}`).checked);
++  const overall = moduleScores.reduce((sum, item) => sum + item.average, 0) / moduleScores.length;
  
-   <footer>
--    Built for legal-tech advisory workflows. Data stays in-browser unless you add your own backend/API.
-+    ENR monitor prototype • Agential connectors and module scoring can be wired to live APIs in <code>sourceFeeds</code> and
-+    <code>modules</code> in <code>app.js</code>.
-   </footer>
+   return {
+-    businessName: document.getElementById("businessName").value.trim(),
+-    industry: document.getElementById("industry").value.trim(),
+-    contact: document.getElementById("contact").value.trim(),
+-    auditDate: document.getElementById("auditDate").value,
+-    scores,
+-    researchAnswers: {
+-      q19: document.getElementById("q19").value.trim(),
+-      q20: document.getElementById("q20").value.trim(),
+-      q21: document.getElementById("q21").value.trim(),
+-      q22: document.getElementById("q22").value.trim(),
+-      q23: document.getElementById("q23").value.trim(),
+-      q24: document.getElementById("q24").value.trim(),
+-    },
+-    selectedUseCases,
++    organisation: document.getElementById("organisation").value.trim(),
++    region: document.getElementById("region").value.trim(),
++    analyst: document.getElementById("analyst").value.trim(),
++    reportDate: document.getElementById("reportDate").value,
++    sourceFeeds,
++    moduleScores,
++    overallScore: Number(overall.toFixed(2)),
++    overallLevel: getLevel(overall),
++    generatedAt: new Date().toISOString(),
+   };
+ }
  
--  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
--  <script src="app.js" defer></script>
-+  <script src="app.js"></script>
- </body>
- </html>
+-function buildAuditData() {
+-  const payload = collectPayload();
+-  const result = evaluateAudit(payload.scores);
+-  return { ...payload, result };
++function getLevel(score) {
++  if (score < 2.8) return "At risk";
++  if (score < 4) return "Watchlist";
++  return "Stable";
+ }
+ 
+-function evaluateAudit(scores) {
+-  const total = scores.reduce((sum, item) => sum + item.score, 0);
+-  const average = total / scores.length;
+-
+-  let level = "Emerging";
+-  let className = "score-emerging";
+-  let guidance = [
+-    "Define a leadership-endorsed AI roadmap with clear legal and business outcomes.",
+-    "Prioritize POPIA-aligned data policies before scaling pilots.",
+-    "Start with low-risk use cases such as internal knowledge search and document triage.",
+-  ];
++function renderSnapshot(snapshot) {
++  overallSummary.innerHTML = `<strong>${snapshot.organisation}</strong> (${snapshot.region}) is <strong>${snapshot.overallLevel}</strong> at <strong>${snapshot.overallScore}/5</strong>.`; 
+ 
+-  if (average >= 3 && average < 4.2) {
+-    level = "Developing";
+-    className = "score-developing";
+-    guidance = [
+-      "Formalize governance committees covering legal, IT, and communications.",
+-      "Expand team enablement with targeted AI literacy and prompt safety training.",
+-      "Standardize client-facing messaging on how AI is used responsibly.",
+-    ];
+-  } else if (average >= 4.2) {
+-    level = "Advanced";
+-    className = "score-advanced";
+-    guidance = [
+-      "Scale AI initiatives with robust model risk monitoring and audit trails.",
+-      "Integrate AI readiness metrics into ongoing client advisory engagements.",
+-      "Create a repeatable innovation playbook for cross-industry deployments.",
+-    ];
+-  }
+-
+-  return { total, average: Number(average.toFixed(2)), level, className, guidance };
+-}
+-
+-function renderResults(payload, result) {
+-  const list = payload.scores.map((item) => `<li><strong>${item.label}:</strong> ${item.score}/5</li>`).join("");
+-
+-  scoreBreakdown.innerHTML = `
+-    <p><strong>${payload.businessName}</strong> (${payload.industry})</p>
+-    <p>
+-      Overall AI maturity:
+-      <strong>${result.level}</strong>
+-      <span class="score-pill ${result.className}">Avg ${result.average}/5</span>
+-    </p>
+-    <ul>${list}</ul>
+-  `;
++  barometerCards.innerHTML = snapshot.moduleScores
++    .map(
++      (module) => `
++        <article class="chart-card">
++          <h3>${module.title}</h3>
++          <p><strong>${module.average}/5</strong> • ${module.level}</p>
++          <ul>${module.indicators.map((item) => `<li>${item.label}: ${item.score}/5</li>`).join("")}</ul>
++        </article>
++      `,
++    )
++    .join("");
+ 
+-  recommendations.innerHTML = `
+-    <h3>Recommendations</h3>
+-    <ol>${result.guidance.map((item) => `<li>${item}</li>`).join("")}</ol>
++  const lowItems = snapshot.moduleScores
++    .flatMap((module) => module.indicators.map((indicator) => ({ module: module.title, ...indicator })))
++    .filter((item) => item.score <= 2);
++
++  priorityActions.innerHTML = `
++    <h3>Priority intelligence actions</h3>
++    ${
++      lowItems.length
++        ? `<ol>${lowItems
++            .map((item) => `<li><strong>${item.module}:</strong> investigate ${item.label.toLowerCase()} and trigger legal/compliance escalation this week.</li>`)
++            .join("")}</ol>`
++        : "<p>No critical weak points flagged. Keep ingestion cadence and monitor regulatory change notices.</p>"
++    }
+   `;
+ 
+   results.classList.remove("hidden");
+ }
+ 
+-function drawPeerGraphs() {
+-  const hasChartJs = typeof window.Chart !== "undefined";
+-
+-  if (!hasChartJs) {
+-    drawBarChart("adoptionChart", sectorAdoptionData, { maxValue: 60, barColor: "#4f46e5", yLabel: "% adoption" });
+-    drawBarChart("investmentChart", investmentBandData, { maxValue: 55, barColor: "#0f766e", yLabel: "% share" });
+-    return;
+-  }
+-
+-  const commonOptions = {
+-    responsive: true,
+-    maintainAspectRatio: false,
+-    plugins: {
+-      legend: { display: false },
+-    },
+-    layout: {
+-      padding: { top: 8, right: 8, bottom: 8, left: 8 },
+-    },
+-  };
+-
+-  const adoptionData = {
+-    labels: sectorAdoptionData.map((item) => item.label),
+-    datasets: [{ data: sectorAdoptionData.map((item) => item.percent), backgroundColor: "#4f46e5" }],
+-  };
+-
+-  const investmentData = {
+-    labels: investmentBandData.map((item) => item.label),
+-    datasets: [{ data: investmentBandData.map((item) => item.percent), backgroundColor: "#0f766e" }],
+-  };
+-
+-  if (adoptionChartInstance) {
+-    adoptionChartInstance.destroy();
+-  }
+-
+-  if (investmentChartInstance) {
+-    investmentChartInstance.destroy();
+-  }
+-
+-  adoptionChartInstance = new Chart(document.getElementById("adoptionChart"), {
+-    type: "bar",
+-    data: adoptionData,
+-    options: {
+-      ...commonOptions,
+-      scales: {
+-        y: { beginAtZero: true, suggestedMax: 60 },
+-        x: {
+-          ticks: {
+-            maxRotation: 0,
+-            minRotation: 0,
+-            autoSkip: false,
+-          },
+-        },
+-      },
+-    },
+-  });
+-
+-  investmentChartInstance = new Chart(document.getElementById("investmentChart"), {
+-    type: "bar",
+-    data: investmentData,
+-    options: {
+-      ...commonOptions,
+-      scales: {
+-        y: { beginAtZero: true, suggestedMax: 55 },
+-        x: {
+-          ticks: {
+-            maxRotation: 35,
+-            minRotation: 35,
+-            autoSkip: false,
+-          },
+-        },
+-      },
+-    },
+-  });
+-}
+-
+-function drawScoreChart(scores) {
+-  drawBarChart(
+-    "scoreChart",
+-    scores.map((item) => ({ label: item.label.split(" ")[0], percent: item.score })),
+-    { maxValue: 5, barColor: "#1f4f99", yLabel: "score" },
+-  );
+-}
+-
+-function drawBarChart(canvasId, data, options) {
+-  const canvas = document.getElementById(canvasId);
+-  const ctx = canvas.getContext("2d");
+-  const width = canvas.width;
+-  const height = canvas.height;
+-
+-  ctx.clearRect(0, 0, width, height);
+-  ctx.fillStyle = "#ffffff";
+-  ctx.fillRect(0, 0, width, height);
+-
+-  const padding = { top: 20, right: 14, bottom: 68, left: 46 };
+-  const chartHeight = height - padding.top - padding.bottom;
+-  const chartWidth = width - padding.left - padding.right;
+-  const barGap = Math.max(8, Math.min(24, chartWidth / (data.length * 2.5)));
+-  const barWidth = (chartWidth - barGap * (data.length - 1)) / data.length;
+-
+-  ctx.strokeStyle = "#dbe3f2";
+-  ctx.lineWidth = 1;
+-  const tickCount = 5;
+-
+-  for (let i = 0; i <= tickCount; i += 1) {
+-    const value = (options.maxValue / tickCount) * i;
+-    const y = padding.top + chartHeight - (value / options.maxValue) * chartHeight;
+-
+-    ctx.beginPath();
+-    ctx.moveTo(padding.left, y);
+-    ctx.lineTo(width - padding.right, y);
+-    ctx.stroke();
+-
+-    ctx.fillStyle = "#6b7280";
+-    ctx.font = "12px Segoe UI";
+-    ctx.fillText(value.toFixed(options.maxValue <= 5 ? 1 : 0), 6, y + 4);
+-  }
+-
+-  data.forEach((item, index) => {
+-    const x = padding.left + index * (barWidth + barGap);
+-    const barHeight = (item.percent / options.maxValue) * chartHeight;
+-    const y = padding.top + chartHeight - barHeight;
+-
+-    ctx.fillStyle = options.barColor;
+-    ctx.fillRect(x, y, barWidth, barHeight);
+-
+-    ctx.fillStyle = "#0f172a";
+-    ctx.font = "bold 11px Segoe UI";
+-    ctx.fillText(`${item.percent}${options.maxValue > 5 ? "%" : ""}`, x + 2, y - 6);
+-
+-    ctx.save();
+-    ctx.translate(x + barWidth / 2, height - 14);
+-    ctx.rotate(-Math.PI / 9);
+-    ctx.fillStyle = "#374151";
+-    ctx.font = "11px Segoe UI";
+-    ctx.fillText(item.label, -barWidth / 2, 0);
+-    ctx.restore();
+-  });
+-
+-  ctx.fillStyle = "#6b7280";
+-  ctx.font = "12px Segoe UI";
+-  ctx.fillText(options.yLabel, 6, 14);
+-}
+-
+-function drawMaturityChart(average) {
+-  const canvas = document.getElementById("maturityChart");
+-  const ctx = canvas.getContext("2d");
+-  const centerX = canvas.width / 2;
+-  const centerY = canvas.height / 2;
+-  const radius = 90;
+-
+-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+-
+-  ctx.beginPath();
+-  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+-  ctx.strokeStyle = "#e5e7eb";
+-  ctx.lineWidth = 18;
+-  ctx.stroke();
+-
+-  const percentage = Math.min(average / 5, 1);
+-  ctx.beginPath();
+-  ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * percentage);
+-  ctx.strokeStyle = percentage < 0.6 ? "#9f1239" : percentage < 0.84 ? "#854d0e" : "#166534";
+-  ctx.lineWidth = 18;
+-  ctx.stroke();
+-
+-  ctx.fillStyle = "#111827";
+-  ctx.font = "bold 30px Segoe UI";
+-  ctx.fillText(`${average}/5`, centerX - 38, centerY + 10);
+-}
+-
+-function clearCanvas(id) {
+-  const canvas = document.getElementById(id);
+-  const ctx = canvas.getContext("2d");
+-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+-}
+-
+-function downloadJson(data) {
+-  downloadFile(JSON.stringify(data, null, 2), `ai-audit-${safeFileName(data.businessName || "report")}.json`, "application/json");
+-}
+-
+-function downloadCsv(data) {
+-  const headerRows = [
+-    ["Business Name", escapeCsvCell(data.businessName)],
+-    ["Industry", escapeCsvCell(data.industry)],
+-    ["Contact", escapeCsvCell(data.contact)],
+-    ["Audit Date", escapeCsvCell(data.auditDate)],
+-    ["Overall Level", escapeCsvCell(data.result.level)],
+-    ["Average Score", data.result.average],
+-    ["Selected Use Cases", escapeCsvCell(data.selectedUseCases.join("; "))],
+-  ];
+-
+-  const scoreRows = data.scores.map((item) => [escapeCsvCell(item.label), item.score]);
+-  const questionRows = Object.entries(data.researchAnswers).map(([key, value]) => [key.toUpperCase(), escapeCsvCell(value)]);
+-
+-  const lines = [
+-    "Field,Value",
+-    ...headerRows.map((row) => `${row[0]},${row[1]}`),
+-    "",
+-    "Category,Score",
+-    ...scoreRows.map((row) => `${row[0]},${row[1]}`),
+-    "",
+-    "Question,Answer",
+-    ...questionRows.map((row) => `${row[0]},${row[1]}`),
+-  ];
+-
+-  downloadFile(lines.join("\n"), `ai-audit-${safeFileName(data.businessName || "report")}.csv`, "text/csv");
+-}
+-
+-function downloadTxtReport(data) {
+-  const lines = [
+-    "AI READINESS AUDIT REPORT",
+-    "========================",
+-    `Business Name: ${data.businessName}`,
+-    `Industry: ${data.industry}`,
+-    `Contact: ${data.contact}`,
+-    `Audit Date: ${data.auditDate}`,
+-    "",
+-    `Overall Maturity: ${data.result.level}`,
+-    `Average Score: ${data.result.average}/5`,
+-    "",
+-    "Category Scores:",
+-    ...data.scores.map((item) => `- ${item.label}: ${item.score}/5`),
+-    "",
+-    "Research Answers:",
+-    `- Q19: ${data.researchAnswers.q19}`,
+-    `- Q20: ${data.researchAnswers.q20}`,
+-    `- Q21: ${data.researchAnswers.q21}`,
+-    `- Q22: ${data.researchAnswers.q22}`,
+-    `- Q23: ${data.researchAnswers.q23}`,
+-    `- Q24: ${data.researchAnswers.q24}`,
+-    "",
+-    "Generative AI Use Cases:",
+-    ...(data.selectedUseCases.length ? data.selectedUseCases.map((item) => `- ${item}`) : ["- None selected"]),
+-    "",
+-    "Recommendations:",
+-    ...data.result.guidance.map((item, index) => `${index + 1}. ${item}`),
+-    "",
+-    "Reach out to us at FuturefitAI@legal.com",
+-  ];
+-
+-  downloadFile(lines.join("\n"), `ai-audit-${safeFileName(data.businessName || "report")}.txt`, "text/plain");
+-}
+-
+ function downloadFile(content, fileName, contentType) {
+   const blob = new Blob([content], { type: `${contentType};charset=utf-8` });
+   const url = URL.createObjectURL(blob);
+   const link = document.createElement("a");
+   link.href = url;
+   link.download = fileName;
+   document.body.appendChild(link);
+   link.click();
+   document.body.removeChild(link);
+   URL.revokeObjectURL(url);
+ }
+ 
+-function escapeCsvCell(value) {
+-  return `"${String(value ?? "").replaceAll('"', '""')}"`;
+-}
+-
+ function safeFileName(value) {
+   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+ }
+-
+-async function generateAiSummary(payload, result) {
+-  aiSummary.textContent = `Summary draft for ${payload.businessName}: ${payload.businessName} is currently at a ${result.level.toLowerCase()} AI readiness stage (${result.average}/5). Focus first on ${result.guidance[0].toLowerCase()}`;
+-}
