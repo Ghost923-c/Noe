@@ -1,8 +1,8 @@
 diff --git a/index.html b/index.html
-index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda230aba1a 100644
+index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..f68157fb7acae839ac59ba5b5ff9831178a52787 100644
 --- a/index.html
 +++ b/index.html
-@@ -1,161 +1,81 @@
+@@ -1,161 +1,79 @@
  <!DOCTYPE html>
  <html lang="en">
  <head>
@@ -24,8 +24,8 @@ index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda
 +        <h1>Regulation, Compliance & Market Intelligence Monitor</h1>
          <p>
 -          A practical internal tool for you to assess how you are adopting and scaling your AI ecosytem. 
-+          An ENR monitoring device with agential source tracking and barometer scoring for battery manufacturing,
-+          independent power producers (IPPs), and wind/solar farms.
++          ENR intelligence workspace with agential connectors across regulatory notices, market feeds,
++          and legal databases. Includes three core barometers: battery manufacturing, IPPs, and wind/solar farms.
          </p>
        </div>
      </div>
@@ -72,10 +72,9 @@ index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda
 -
 -        <p class="hint">Source: SARB/FSCA Artificial Intelligence in the South African Financial Sector Databook.</p>
 -      </section>
-+      <h2>Monitoring architecture</h2>
++      <h2>Source connector status</h2>
 +      <p>
-+        This prototype tracks whether your intelligence agents are connected to core news streams and key databases,
-+        then scores three operational modules against compliance-critical indicators.
++        The feeds below are ENR-relevant sources used by the monitoring agent to keep compliance and market signals current.
 +      </p>
 +      <div class="source-grid" id="source-list"></div>
      </section>
@@ -83,7 +82,7 @@ index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda
      <section class="card">
 -      <h2>Audit Details</h2>
 -      <form id="audit-form">
-+      <h2>Assessment input</h2>
++      <h2>Barometer scoring input</h2>
 +      <form id="monitor-form">
          <div class="grid two">
            <label>
@@ -145,7 +144,7 @@ index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda
  
 -        <h3>Generative AI Use Cases (select all that apply)</h3>
 -        <div id="usecase-list" class="grid two"></div>
-+        <h3>Module barometer scoring (1 weak - 5 strong)</h3>
++        <h3>Score each indicator from 1 (weak) to 5 (strong)</h3>
 +        <div id="module-list" class="grid one"></div>
  
          <div class="actions">
@@ -189,8 +188,7 @@ index dd289b9f982f078ac13c4270b2f8e6660dcbfb13..3b330b5052addc668cc36318d4bb1dda
  
    <footer>
 -    Built for legal-tech advisory workflows. Data stays in-browser unless you add your own backend/API.
-+    ENR monitor prototype • Agential connectors and module scoring can be wired to live APIs in <code>sourceFeeds</code> and
-+    <code>modules</code> in <code>app.js</code>.
++    Prototype only: wire <code>sourceFeeds</code> and <code>modules</code> in <code>app.js</code> to your live APIs and document stores.
    </footer>
  
 -  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
